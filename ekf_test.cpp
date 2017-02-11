@@ -24,7 +24,7 @@ class RectEKF : public thyu::ExtendedKalmanFilter<float, 4, 2, 2> {
   
   virtual Measurement getMeasurement(const State& state) {
     Measurement M;
-    // top left
+    // center point location
     M(0) = state(0);
     M(1) = state(1);
     return M;

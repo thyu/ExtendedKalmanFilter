@@ -65,7 +65,7 @@ namespace thyu {
 
         virtual ~ExtendedKalmanFilter(){ /* do nothing */ }
 
-        virtual void predict(const Control& control){
+        virtual void predict(const Control& control = Control::Zero()){
 
           auto stateJacobian = getStateJacobian(this->state_, control);
           auto stateNoise = getStateError(this->state_, control);
@@ -76,7 +76,7 @@ namespace thyu {
 
         };
 
-        virtual void update(const Measurement& measurement){
+        virtual void update(const Measurement& measurement = Measurement::Zero()){
           // Measurement jacobian
           auto mj = getMeasurementJacobian(this->state_, measurement);
           // Innocation Covariance
@@ -87,21 +87,18 @@ namespace thyu {
           this->state_ += kGain * (measurement - getMeasurement(this->state_));
           this->stateCov_ -= kGain * mj * this->stateCov_;
         };
-        
+       
+        // You need to implement them
         virtual Measurement getMeasurement(const State& state) = 0;
         virtual State getPrediction(const State& state, const Control& control) = 0;
 
       protected:
 
+        // You need to implement them
         virtual StateJacobian getStateJacobian(const State& state, const Control& control) = 0; 
-        virtual StateError getStateError(const State& state, const Control& control) {
-          return StateError::Identity();
-        };
-
+        virtual StateError getStateError(const State& state, const Control& control) = 0;
         virtual MeasurementJacobian getMeasurementJacobian(const State& state, const Measurement& measurement) = 0;
-        virtual MeasurementError getMeasurementError(const State& state, const Measurement& measurement){
-          return MeasurementError::Identity();
-        };
+        virtual MeasurementError getMeasurementError(const State& state, const Measurement& measurement) = 0;
 
     };
 
